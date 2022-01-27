@@ -7,10 +7,12 @@ from time import sleep
 Servo = 11
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(Servo, GPIO.OUT)
-GPIO.setup(Servo, GPIO.OUT)
 
 pwm=GPIO.PWM(Servo, 50)
 
+pmw.start(0)
+
+pwm.ChangeDutyCycle(7.5)
 
 ENA_L = 40
 ENB_L = 38
@@ -125,11 +127,11 @@ def DriveRight():
 def PickUp():
     pwm.start(0)
 
-    pwm.ChangeDutyCycle(5) # left -90 deg position
+    pwm.ChangeDutyCycle(5) 
     sleep(1)
-    pwm.ChangeDutyCycle(7.5) # neutral position
+    pwm.ChangeDutyCycle(7.5) 
     sleep(1)
-    pwm.ChangeDutyCycle(10) # right +90 deg position
+    pwm.ChangeDutyCycle(10) 
     sleep(1)
 
     pwm.stop()
