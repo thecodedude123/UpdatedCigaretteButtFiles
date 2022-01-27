@@ -122,7 +122,18 @@ def DriveRight():
 
     pmwAR.stop()
     pmwBR.stop()
+def PickUp():
+    pwm.start(0)
 
+    pwm.ChangeDutyCycle(5) # left -90 deg position
+    sleep(1)
+    pwm.ChangeDutyCycle(7.5) # neutral position
+    sleep(1)
+    pwm.ChangeDutyCycle(10) # right +90 deg position
+    sleep(1)
+
+    pwm.stop()
+        
 while True:
     GPIO.output(TRIG,True)
     time.sleep(0.0001)
@@ -151,7 +162,7 @@ while True:
     orange_mask = cv2.inRange(hsv_frame,deep_orange,bright_orange)
     _,contours,_ = cv2.findContours(orange_mask, cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
     contours = sorted(contours,key=lambda x:cv2.contourArea(x),reverse=True)
-
+    
     for i in contours:
         (x,y,w,h) = cv2.boundingRect(i)
 
@@ -160,22 +171,15 @@ while True:
         break
 
     midpoint = (x + w/2,y + h/2)
-
+    
+    cv2.rectangle(frame, (250, 250), (350, 350), (0, 0, 255), 3)
+    cv2.imshow("frame", frame)
+    cv2.imshow("mask", orange_mask)
 
     if midpoint[0] > 250 and midpoint[0] < 350 and midpoint[1] > 250 and midpoint[1] < 350:
         image = cv2.putText(frame, "Pick up", (30,100),cv2.FONT_HERSHEY_PLAIN , 1, (0,0,0), 2, cv2.LINE_AA)
-        pwm.start(0)
+        PickUp()
 
-        pwm.ChangeDutyCycle(5) # left -90 deg position
-        sleep(1)
-        pwm.ChangeDutyCycle(7.5) # neutral position
-        sleep(1)
-        pwm.ChangeDutyCycle(10) # right +90 deg position
-        sleep(1)
-
-        pwm.stop()
-
-        
     elif midpoint[1] < 250:
         image = cv2.putText(frame, "Get into position", (30, 100), cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 0), 2, cv2.LINE_AA)
         Drive()
@@ -187,12 +191,7 @@ while True:
         DriveRight()
     else:
         Drive()
-
-
-    cv2.rectangle(frame, (250, 250), (350, 350), (0, 0, 255), 3)
-    cv2.imshow("frame", frame)
-    cv2.imshow("mask", orange_mask)
-
+        
     key = cv2.waitKey(1)
     if key == 113:
         break
